@@ -26,7 +26,7 @@ def send_to_kafka(producer: KafkaProducer, topic_name: str, data):
 
 if __name__ == "__main__":
     faker = Faker()
-    producer = KafkaProducer(bootstrap_servers=["localhost:29092"])
+    producer = KafkaProducer(bootstrap_servers=["broker:9092"])
 
     for i in range(0, 10):
         send_to_kafka(producer, "user_entry", (create_sample_date(faker, i)))
