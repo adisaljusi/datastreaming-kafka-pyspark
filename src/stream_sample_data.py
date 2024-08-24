@@ -18,7 +18,7 @@ def create_sample_date(faker: Faker, id: int):
 
 def send_to_kafka(producer: KafkaProducer, topic_name: str, data):
     try:
-        producer.send(topic_name, json.dumps(data))
+        producer.send(topic=topic_name, value=json.dumps(data).encode("utf-8"))
     except Exception as e:
         logging.error(f"Error while sending data to topic {topic_name}")
         logging.error(str(e))
@@ -26,8 +26,11 @@ def send_to_kafka(producer: KafkaProducer, topic_name: str, data):
 
 if __name__ == "__main__":
     faker = Faker()
-    producer = KafkaProducer(bootstrap_servers=["broker:9092"])
+    producer = KafkaProducer(bootstrap_servers=["localhost:9092"], max_block_ms=5000)
 
     for i in range(0, 10):
-        send_to_kafka(producer, "user_entry", (create_sample_date(faker, i)))
+        data = create_sample_date(faker, i)
+        print(data)
+        send_to_kafka(producer, "user_entry", data=data)
         time.sleep(5)
+        logging.info(f"User with id {data['id']}")
